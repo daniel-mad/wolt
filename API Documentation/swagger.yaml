@@ -1,365 +1,430 @@
-swagger: "2.0"
+swagger: '2.0'
 info:
-  description: "This is a sample server Wolt server."
-  version: "1.0.0"
-  title: "Swagger Wolt"
-  termsOfService: "http://swagger.io/terms/"
+  description: 'This is a sample server Wolt server.'
+  version: '1.0.0'
+  title: 'Swagger Wolt'
+  termsOfService: 'http://swagger.io/terms/'
   contact:
-    email: "apiteam@swagger.io"
+    email: 'apiteam@swagger.io'
   license:
-    name: "Apache 2.0"
-    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "wolt.swagger.io"
-basePath: "/v1"
+    name: 'Apache 2.0'
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: 'wolt.swagger.io'
+basePath: '/v1'
 tags:
-- name: "auth"
-  description: "Operations about delivey user and customers authentication."
-  
-- name: "delivery"
-  description: "Operations about delivery user"
-  
-- name: "customers"
-  description: "Operations about customers"
+  - name: 'auth'
+    description: 'Operations about delivey user and customers authentication.'
+
+  - name: 'delivery'
+    description: 'Operations about delivery user'
+
+  - name: 'customers'
+    description: 'Operations about customers'
 
 schemes:
-- "https"
-- "http"
+  - 'https'
+  - 'http'
 paths:
   /signup:
     post:
       tags:
-      - "auth"
-      summary: "Signup user into the system"
-      description: ""
-      operationId: "signup"
+        - 'auth'
+      summary: 'Signup user into the system'
+      description: ''
+      operationId: 'signup'
       consumes:
-      - "application/json"
+        - 'application/json'
       produces:
-      - "application/json"
+        - 'application/json'
       parameters:
-      - in: "body"
-        name: "body"
-        description: "Created user object"
-        required: true
-        schema:
-          $ref: "#/definitions/UserCreate"
-      responses:
-        "201":
-          description: "User created"
+        - in: 'body'
+          name: 'body'
+          description: 'Created user object'
+          required: true
           schema:
-            $ref: "#/definitions/Token"
-        "400":
-          description: "Invalid input"
-        "409":
-          description: "User already exists"
-        "500":
-          description: "Internal server error"
+            $ref: '#/definitions/UserCreate'
+      responses:
+        '201':
+          description: 'User created'
+          schema:
+            $ref: '#/definitions/Token'
+        '400':
+          description: 'Invalid input'
+        '409':
+          description: 'User already exists'
+        '500':
+          description: 'Internal server error'
   /login:
     post:
       tags:
-      - "auth"
-      summary: "Login user into the system"
-      description: ""
-      operationId: "login"
+        - 'auth'
+      summary: 'Login user into the system'
+      description: ''
+      operationId: 'login'
       consumes:
-      - "application/json"
+        - 'application/json'
       produces:
-      - "application/json"
+        - 'application/json'
       parameters:
-      - in: "body"
-        name: "body"
-        description: "Created user object"
-        required: true
-        schema:
-          $ref: "#/definitions/UserLogin"
-      responses:
-        "200":
-          description: "User logged in"
+        - in: 'body'
+          name: 'body'
+          description: 'Created user object'
+          required: true
           schema:
-            $ref: "#/definitions/Token"
-        "400":
-          description: "Invalid input"
-        "404":
-          description: "User is not found"
-        "500":
-          description: "Internal server error"
-      
-      
+            $ref: '#/definitions/UserLogin'
+      responses:
+        '200':
+          description: 'User logged in'
+          schema:
+            $ref: '#/definitions/Token'
+        '400':
+          description: 'Invalid input'
+        '404':
+          description: 'User is not found'
+        '500':
+          description: 'Internal server error'
+
   /delivery/pickups:
     get:
       tags:
-      - "delivery"
-      summary: "Sort pickups by multiple criteria"
-      description:  ""
+        - 'delivery'
+      summary: 'Sort pickups by multiple criteria'
+      description: "Get all active pickups \nYou can search by multiple filters"
       produces:
-      - "application/json"
+        - 'application/json'
       parameters:
-        - name: "city"
-          description: "pickups from this city"
-          in: "query"
-          type: "string"
-        - name: "address"
-          description: "pickups from this address"
-          in: "query"
-          type: "string"
-        - name: "restaurant"
-          description: "pickups by restaurant name"
-          in: "query"
-          type: "string"
+        - name: 'name'
+          description: 'restaurant name'
+          in: 'query'
+          type: 'string'
+
+        - name: 'city'
+          description: 'restaurant city name'
+          in: 'query'
+          type: 'string'
+
       responses:
-        "200":
-          description: "successful operation"
+        '200':
+          description: 'successful operation'
           schema:
-            type: "array"
+            type: 'array'
             items:
-              $ref: "#/definitions/Pickup"
-        "404":
-          description: "no pickups found"
-        "401":
-          description: "unauthorized"
-        "500":
-          description: "Internal server error"
+              type: 'object'
+              properties:
+                restaurant:
+                  type: 'object'
+                  properties:
+                    name:
+                      type: 'string'
+                    city:
+                      type: 'string'
+                    address:
+                      type: 'string'
+                orders:
+                  type: 'array'
+                  items:
+                    type: 'object'
+                    properties:
+                      customer_address:
+                        type: 'string'
+
+                      price:
+                        type: 'integer'
+
+        '404':
+          description: 'no pickups found'
+        '401':
+          description: 'unauthorized'
+        '500':
+          description: 'Internal server error'
       security:
-      - jwt_auth: []
-  
-      
-      
+        - jwt_auth: []
+
   /customer/orders:
     get:
       tags:
-      - "customers"
-      summary: "get historically orders"
-      description:  "get historically orders using pagination"
+        - 'customers'
+      summary: 'get historically orders'
+      description: 'get historically orders using pagination'
       produces:
-      - "application/json"
+        - 'application/json'
       parameters:
-        - name: "page"
-          description: "page number"
-          in: "query"
-          type: "integer"
+        - name: 'page'
+          description: 'page number'
+          in: 'query'
+          type: 'integer'
           default: 1
-        
+
       responses:
-        "200":
-          description: "successful operation"
+        '200':
+          description: 'successful operation'
           schema:
-            type: "array"
+            type: 'array'
             items:
-              $ref: "#/definitions/Orders"
-        "404":
-          description: "no orders found"
-        "401":
-          description: "unauthorized"
-        "500":
-          description: "Internal server error"
+              $ref: '#/definitions/Orders'
+        '404':
+          description: 'no orders found'
+        '401':
+          description: 'unauthorized'
+        '500':
+          description: 'Internal server error'
       security:
-      - jwt_auth: []
-      
+        - jwt_auth: []
+
   /customer/order/{orderId}:
     get:
       tags:
-      - "customers"
-      summary: "get order by id"
-      description:  "get order by id for tracking"
+        - 'customers'
+      summary: 'get order by id'
+      description: 'get order by id for tracking'
       produces:
-      - "application/json"
+        - 'application/json'
       parameters:
-        - name: "orderId"
-          description: "order id"
-          in: "path"
-          type: "string"
+        - name: 'orderId'
+          description: 'order id'
+          in: 'path'
+          type: 'string'
           required: true
-        
+
       responses:
-        "200":
-          description: "successful operation"
+        '200':
+          description: 'successful operation'
           schema:
-              $ref: "#/definitions/Order"
-        "400":
-          description: "invalid id"
-        "404":
-          description: "no order found"
-        "401":
-          description: "unauthorized"
-        "500":
-          description: "Internal server error"
+            $ref: '#/definitions/Order'
+        '400':
+          description: 'invalid id'
+        '404':
+          description: 'no order found'
+        '401':
+          description: 'unauthorized'
+        '500':
+          description: 'Internal server error'
       security:
-      - jwt_auth: []
-      
+        - jwt_auth: []
+
   /customer/order:
     post:
       tags:
-      - "customers"
-      summary: "Create an order"
-      description:  ""
+        - 'customers'
+      summary: 'Create an order'
+      description: ''
       consumes:
-        - "application/json"
+        - 'application/json'
       produces:
-        - "application/json"
+        - 'application/json'
       parameters:
-      - in: "body"
-        name: "body"
-        description: "items array"
-        required: true
-        schema:
-          type: "array"
-          items:
-            $ref: "#/definitions/Item"
-        
+        - in: 'body'
+          name: 'body'
+          description: 'items array'
+          required: true
+          schema:
+            type: 'object'
+            properties:
+              shipping:
+                type: 'object'
+                properties:
+                  city:
+                    type: 'string'
+                  address:
+                    type: 'string'
+
+              order_items:
+                type: 'array'
+                items:
+                  type: 'object'
+                  properties:
+                    id:
+                      type: 'string'
+                    name:
+                      type: 'string'
+                    price:
+                      type: 'integer'
+
+              total:
+                type: 'integer'
+
+              payments:
+                type: 'object'
+                properties:
+                  type:
+                    type: 'string'
+
       responses:
-        "201":
-          description: "order created"
-        "400":
-          description: "invalid input"
-        "401":
-          description: "unauthorized"
-        "500":
-          description: "Internal server error"
+        '201':
+          description: 'order created'
+          schema:
+            type: 'object'
+            properties:
+              order_id:
+                type: 'string'
+              longitude:
+                type: 'integer'
+                format: 'double'
+              latitude:
+                type: 'integer'
+                format: 'double'
+
+        '400':
+          description: 'invalid input'
+        '401':
+          description: 'unauthorized'
+        '402':
+          description: 'Payment required'
+        '500':
+          description: 'Internal server error'
       security:
-      - jwt_auth: []
-  
+        - jwt_auth: []
 
 securityDefinitions:
   jwt_auth:
-    type: "apiKey"
-    name: "jwt authorization"
-    in: "header"
-    
-    
+    type: 'apiKey'
+    name: 'jwt authorization'
+    in: 'header'
+
 definitions:
   UserCreate:
-    type: "object"
+    type: 'object'
     properties:
       first_name:
-        type: "string"
+        type: 'string'
       last_name:
-        type: "string"
+        type: 'string'
       email:
-        type: "string"
+        type: 'string'
       password:
-        type: "string"
+        type: 'string'
       password_confirm:
-        type: "string"
+        type: 'string'
       phone:
-        type: "string"
+        type: 'string'
       user_type:
-        type: "string"
+        type: 'string'
         enum:
-        - "customer"
-        - "delivery"
-        
+          - 'customer'
+          - 'delivery'
+
   UserLogin:
-    type: "object"
+    type: 'object'
     properties:
       email:
-        type: "string"
-        
+        type: 'string'
+
       password:
-        type: "string"
-    
+        type: 'string'
+
   Token:
-    type: "object"
+    type: 'object'
     properties:
       token:
-        type: "string"
-        example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
-  
+        type: 'string'
+        example: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+
   Pickup:
-    type: "object"
+    type: 'object'
     properties:
       id:
-        type: "string"
-        description: "pickup id"
+        type: 'string'
+        description: 'pickup id'
       restaurant_id:
-        type: "string"
+        type: 'string'
+      restaurant_name:
+        type: 'string'
       order_id:
-        type: "string"
+        type: 'string'
       customer_info:
-        $ref : "#/definitions/Customer"
-  
+        $ref: '#/definitions/Customer'
+
   Customer:
-    type: "object"
+    type: 'object'
     properties:
       first_name:
-        type: "string"
+        type: 'string'
       last_name:
-        type: "string"
+        type: 'string'
       city:
-        type: "string"
+        type: 'string'
       address:
-        type: "string"
+        type: 'string'
       phone:
-        type: "string"
-      
-  
+        type: 'string'
+
   Item:
-    type: "object"
+    type: 'object'
     properties:
       id:
-        type: "string"
+        type: 'string'
       name:
-        type: "string"
+        type: 'string'
       description:
-        type: "string"
+        type: 'string'
       price:
-        type: "integer"
-        format: "double"
-        
-        
+        type: 'integer'
+        format: 'double'
+
   Order:
-    type: "object"
+    type: 'object'
     properties:
       id:
-        type: "string"
+        type: 'string'
       items:
-        type : "array"
+        type: 'array'
         items:
-           $ref : "#/definitions/Item"
+          $ref: '#/definitions/Item'
       createdAt:
-        type: "string"
-        format: "date-time"
+        type: 'string'
+        format: 'date-time'
       shipDate:
-        type: "string"
-        format: "date-time"
+        type: 'string'
+        format: 'date-time'
       status:
-        type: "string"
-        description: "Order Status"
+        type: 'string'
+        description: 'Order Status'
         enum:
-        - "placed"
-        - "approved"
-        - "delivered"
+          - 'placed'
+          - 'approved'
+          - 'delivered'
       complete:
-        type: "boolean"
+        type: 'boolean'
         default: false
       sum:
-        type: "integer"
-        format: "double"
+        type: 'integer'
+        format: 'double'
       longitude:
-        type: "integer"
-        format: "double"
+        type: 'integer'
+        format: 'double'
         example: 34.774307
       latitude:
-        type: "integer"
-        format: "double"
+        type: 'integer'
+        format: 'double'
         example: 31.894272
-      
+
+  OrderCreate:
+    type: 'object'
+    properties:
+      user_id:
+        type: 'string'
+      order_items:
+        type: 'array'
+        items:
+          $ref: '#/definitions/Item'
+
   Orders:
-     type: "object"
-     properties:
+    type: 'object'
+    properties:
       meta:
-        type: "object"
+        type: 'object'
         properties:
           page:
-            type: "integer"
+            type: 'integer'
           total:
-            type: "integer"
+            type: 'integer'
           last_page:
-            type: "integer"
+            type: 'integer'
       data:
-        type : "array"
+        type: 'array'
         items:
-           $ref : "#/definitions/Order"
+          $ref: '#/definitions/Order'
 
 externalDocs:
-  description: "Find out more about Swagger"
-  url: "http://swagger.iom"
+  description: 'Find out more about Swagger'
+  url: 'http://swagger.io'
