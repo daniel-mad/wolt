@@ -25,8 +25,8 @@ schemes:
   - 'https'
   - 'http'
 paths:
-  /signup:
-    post:
+  /signup/{userid}:
+    put:
       tags:
         - 'auth'
       summary: 'Signup user into the system'
@@ -36,22 +36,47 @@ paths:
         - 'application/json'
       produces:
         - 'application/json'
+
       parameters:
+        - name: 'userid'
+          in: 'path'
+          required: true
+          type: 'string'
         - in: 'body'
           name: 'body'
-          description: 'Created user object'
+          description: 'update user object'
           required: true
           schema:
-            $ref: '#/definitions/UserCreate'
+            type: 'object'
+            properties:
+              first_name:
+                type: 'string'
+              last_name:
+                type: 'string'
+              phone:
+                type: 'string'
+              city:
+                type: 'string'
+              address:
+                type: 'string'
+              password:
+                type: 'string'
+              password_confirm:
+                type: 'string'
+
       responses:
-        '201':
-          description: 'User created'
+        '200':
+          description: 'User signup'
           schema:
-            $ref: '#/definitions/Token'
+            type: 'object'
+            properties:
+              token:
+                type: 'string'
+                example: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
         '400':
           description: 'Invalid input'
-        '409':
-          description: 'User already exists'
+        '401':
+          description: 'Unauthorized'
         '500':
           description: 'Internal server error'
   /login:
@@ -79,11 +104,44 @@ paths:
             $ref: '#/definitions/Token'
         '400':
           description: 'Invalid input'
+        '401':
+          description: 'Unauthorized'
         '404':
           description: 'User is not found'
         '500':
           description: 'Internal server error'
 
+  /delivery/signup:
+    post:
+      tags:
+        - 'delivery'
+      summary: 'Signup delivery user into the system'
+      description: ''
+      operationId: 'delivery-signup'
+      consumes:
+        - 'application/json'
+      produces:
+        - 'application/json'
+      parameters:
+        - in: 'body'
+          name: 'body'
+          description: 'Created delivery user object'
+          required: true
+          schema:
+            type: 'object'
+            properties:
+              email:
+                type: 'string'
+                example: 'delivery@mail.com'
+      responses:
+        '201':
+          description: 'Delivery user created, email will sent with url verification'
+        '400':
+          description: 'Invalid input'
+        '409':
+          description: 'User already exists'
+        '500':
+          description: 'Internal server error'
   /delivery/pickups:
     get:
       tags:
@@ -100,6 +158,16 @@ paths:
 
         - name: 'city'
           description: 'restaurant city name'
+          in: 'query'
+          type: 'string'
+
+        - name: 'customer_address'
+          description: 'customer address'
+          in: 'query'
+          type: 'string'
+
+        - name: 'customer_phone'
+          description: 'customer phone'
           in: 'query'
           type: 'string'
 
@@ -125,9 +193,15 @@ paths:
                   items:
                     type: 'object'
                     properties:
-                      customer_address:
-                        type: 'string'
-
+                      customer_details:
+                        type: 'object'
+                        properties:
+                          name:
+                            type: 'string'
+                          phone:
+                            type: 'string'
+                          address:
+                            type: 'string'
                       price:
                         type: 'integer'
 
@@ -140,6 +214,38 @@ paths:
       security:
         - jwt_auth: []
 
+  /customer/signup:
+    post:
+      tags:
+        - 'customers'
+      summary: 'Signup customer user into the system'
+      description: ''
+      operationId: 'customer-signup'
+      consumes:
+        - 'application/json'
+      produces:
+        - 'application/json'
+      parameters:
+        - in: 'body'
+          name: 'body'
+          description: 'Created customer user object'
+          required: true
+          schema:
+            type: 'object'
+            properties:
+              email:
+                type: 'string'
+                example: 'customer@mail.com'
+      responses:
+        '201':
+          description: 'Customer user created, email will sent with url verification'
+
+        '400':
+          description: 'Invalid input'
+        '409':
+          description: 'User already exists'
+        '500':
+          description: 'Internal server error'
   /customer/orders:
     get:
       tags:
