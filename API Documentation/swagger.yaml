@@ -89,6 +89,66 @@ paths:
         '500':
           description: 'Internal server error'
 
+  /users:
+    get:
+      tags:
+        - 'auth'
+      summary: 'Get all users'
+      description: ''
+      operationId: 'users'
+      consumes:
+        - 'application/json'
+      produces:
+        - 'application/json'
+
+      responses:
+        '200':
+          description: 'Get all users list'
+          schema:
+            type: 'array'
+            items:
+              $ref: '#/definitions/UserDb'
+        '401':
+          description: 'Unauthorized'
+        '404':
+          description: 'Users are not found'
+        '500':
+          description: 'Internal server error'
+
+      security:
+        - jwt_auth: []
+
+  /users/{userId}:
+    get:
+      tags:
+        - 'auth'
+      summary: 'Get user by id'
+      description: ''
+      operationId: 'userId'
+      consumes:
+        - 'application/json'
+      produces:
+        - 'application/json'
+
+      parameters:
+        - name: 'userId'
+          in: 'path'
+          type: 'string'
+          required: true
+      responses:
+        '200':
+          description: 'Get user'
+          schema:
+            $ref: '#/definitions/UserDb'
+        '401':
+          description: 'Unauthorized'
+        '404':
+          description: 'Users are not found'
+        '500':
+          description: 'Internal server error'
+
+      security:
+        - jwt_auth: []
   /delivery/pickups:
     get:
       tags:
@@ -315,6 +375,24 @@ definitions:
       password:
         type: 'string'
       password_confirm:
+        type: 'string'
+      phone:
+        type: 'string'
+      user_type:
+        type: 'string'
+        enum:
+          - 'customer'
+          - 'delivery'
+  UserDb:
+    type: 'object'
+    properties:
+      id:
+        type: 'string'
+      first_name:
+        type: 'string'
+      last_name:
+        type: 'string'
+      email:
         type: 'string'
       phone:
         type: 'string'
